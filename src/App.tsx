@@ -1,63 +1,104 @@
-import React, {useEffect, useState} from 'react';
-import logo from './logo.svg';
+import React, {useCallback, useEffect, useState} from 'react';
 import './App.css';
-import * as Papa from 'papaparse';
+import Papa from 'papaparse';
+import {ToastContainer, toast} from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
+import DrugSelect from "./DrugSelect";
+import {log} from "node:util";
 
 
 const App = ( ) => {
 
-    const [data, setData] = useState<Array<DrugEntry>>([]);
+    const [parsedData, setParsedData] = useState<Array<DrugEntry>>([]);
+    const availableDataSets = ['dermatological', 'hormonal', 'respiratory'];
+    const [selectedDataset, setSelectedDataset] = useState('');
 
-    const toParse = "DDInterID_A,Drug_A,DDInterID_B,Drug_B,Level\n" +
-        "DDInter513,Dexamethasone,DDInter582,Dolutegravir,Minor\n" +
-        "DDInter582,Dolutegravir,DDInter625,Elagolix,Minor\n" +
-        "DDInter582,Dolutegravir,DDInter1700,Somatrem,Minor\n" +
-        "DDInter1699,Somatotropin,DDInter582,Dolutegravir,Minor\n" +
-        "DDInter195,Betamethasone,DDInter1961,Zidovudine,Moderate\n" +
-        "DDInter1961,Zidovudine,DDInter513,Dexamethasone,Moderate\n" +
-        "DDInter1961,Elagolix,DDInter747,Fludrocortisone,Moderate\n" +
-        "DDInter1961,Zidovudine,DDInter885,Hydrocortisone,Moderate\n" +
-        "DDInter1961,Zidovudine,DDInter1191,Methylprednisolone,Moderate\n" +
-        "DDInter1961,Zidovudine,DDInter1513,Prednisolone,Moderate\n" +
-        "DDInter1961,Zidovudine,DDInter1515,Prednisone,Moderate";
-
-    const parseCSV = () => {
-        Papa.parse(toParse, {
-            delimiter: ',',
-            header: true,
-            complete: (results) => {
-                setData(results.data as DrugEntry[])
-            }
-        });
+    const selectDataset = (name: string) => {
+        if (availableDataSets.includes(name)){
+            setSelectedDataset(name);
+            fetchData();
+        }
     }
 
+    const fetchData = useCallback(() => {
+        fetch(`/assets/${selectedDataset}.csv`)
+            .then(response => {
+                if(!response.ok) {
+                    throw new Error('Error: Network response' + response.statusText);
+                }
+                return response.blob();
+            })
+            .then(blob => {
+                let file = new File([blob], `${selectedDataset}.csv`, {type: "text/csv"});
+                Papa.parse(file, {
+                    delimiter: ',',
+                    header: true,
+                    complete: (results) => {
+                        console.log(results);
+                        setParsedData(results.data as DrugEntry[]);
+                    }
+                });
+            })
+            .catch(error => console.error('There has been a problem with your fetch operation: ', error.message));
+    }, [selectedDataset, setSelectedDataset]);
+
+
     const compareDrug = (drug: string) => {
-        const interactiveDrugs = data.filter(item => (item.Drug_A === drug || item.Drug_B === drug))
-        console.log(interactiveDrugs);
+        const interactiveDrugs = parsedData.filter(item => (item.Drug_A === drug || item.Drug_B === drug))
     }
 
     useEffect(() => {
-        parseCSV();
-        compareDrug("Elagolix");
-    }, []);
+        console.log(parsedData.length)
+    }, [parsedData]);
 
   return (
     <div className="App">
         <header className="App-header">
             <h1>
-              Squirrels are fun
+              MediMatch
             </h1>
-            <button className="header-button">
-              FAQ
-            </button>
         </header>
-        <body>
-            <input
-                type="search"
-                className="input-field"
-                placeholder="Start typing a drug..."
+        <div className="content">
+            <ToastContainer
+                position="bottom-right"
+                theme="light"
             />
-        </body>
+            <div className="menu-button-container">
+                <button className="menu-button">
+                    <a href=''>
+                        Home
+                    </a>
+                </button>
+                <button
+                    className="menu-button"
+                    onClick={() => toast(`Oh no! This page isn't implemented...`)}
+                >
+                    About
+                </button>
+                <button
+                    className="menu-button"
+                    onClick={() => toast(`Oh no! This page isn't implemented...`)}
+                >
+                    Help & Contact
+                </button>
+            </div>
+            <div className="interaction-checker">
+                <button
+                    className='dataset-button'
+                    onClick={() => selectDataset('hormonal')}
+                >
+                    Load hormonal drugs dataset
+                </button>
+                <button
+                    className='dataset-button'
+                    onClick={() => selectDataset('respiratory')}
+                >
+                    Load respiratory drugs dataset
+                </button>
+                <hr />
+                <DrugSelect drugs={parsedData}/>
+            </div>
+        </div>
     </div>
   );
 }
@@ -68,11 +109,10 @@ export interface AppProps {
     temp: string;
 }
 
-interface DrugEntry {
+export interface DrugEntry {
     DDInterID_A: string;
     DDInterID_B: string;
     Drug_A: string;
     Drug_B: string;
     Level: string;
-
 }
