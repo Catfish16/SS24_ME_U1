@@ -61,7 +61,7 @@ a, a:visited, a:hover, a:active {
   margin-top: 2rem;
   max-width: 66%;
   padding: 1rem 3rem;
-  border-width: 2px 0px;
+  border-width: 2px 0;
   border-style: solid;
   border-color: #4f836d;
 }

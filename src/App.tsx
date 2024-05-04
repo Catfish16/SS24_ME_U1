@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useState} from 'react';
 import './App.css';
 import Papa from 'papaparse';
 import {ToastContainer, toast} from "react-toastify";
@@ -59,7 +59,7 @@ const App = ( ) => {
             />
             <div className="menu-button-container">
                 <button className="menu-button">
-                    <a href=''>
+                    <a href='/'>
                         Home
                     </a>
                 </button>
