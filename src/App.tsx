@@ -4,13 +4,11 @@ import Papa from 'papaparse';
 import {ToastContainer, toast} from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import DrugSelect from "./DrugSelect";
-import {log} from "node:util";
-
 
 const App = ( ) => {
 
     const [parsedData, setParsedData] = useState<Array<DrugEntry>>([]);
-    const availableDataSets = ['dermatological', 'hormonal', 'respiratory'];
+    const availableDataSets = [ 'hormonal', 'respiratory'];
     const [selectedDataset, setSelectedDataset] = useState('');
 
     const selectDataset = (name: string) => {
@@ -95,8 +93,15 @@ const App = ( ) => {
                 >
                     Load respiratory drugs dataset
                 </button>
-                <hr />
-                <DrugSelect drugs={parsedData}/>
+                {selectedDataset &&
+                    <span>
+                        <hr />
+                        <p className="instruction-text"> Select at least two and up to five drugs </p>
+                            <DrugSelect
+                            drugs={parsedData}
+                        />
+                    </span>
+                }
             </div>
         </div>
     </div>

@@ -1,0 +1,13 @@
+.no-interaction-container {
+    border: 1px solid rgba(35, 108, 77, 0.69);
+    border-radius: 4px;
+    background-color: rgba(204, 231, 219, 0.46);
+    margin: 2rem;
+}
+
+.interaction-container {
+    border: 2px solid rgba(140, 78, 104, 0.69);
+    background-color: rgba(248, 213, 219, 0.58);
+    border-radius: 4px;
+    margin: 2rem;
+}

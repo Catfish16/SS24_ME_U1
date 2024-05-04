@@ -58,15 +58,22 @@ a, a:visited, a:hover, a:active {
 }
 
 .interaction-checker {
-  max-width: 33%;
+  margin-top: 2rem;
+  max-width: 66%;
   padding: 1rem 3rem;
-  border: 2px solid #4f836d;
-  border-radius: 0.5rem;
+  border-width: 2px 0px;
+  border-style: solid;
+  border-color: #4f836d;
 }
 
 .dataset-button {
   margin: 0.5rem 1rem;
   padding: 0.5rem;
   border: none;
-  color: darkgreen;
+  color: #166177;
+}
+
+.instruction-text {
+  font-size: smaller;
+  color: darkslategray;
 }
