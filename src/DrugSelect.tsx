@@ -4,6 +4,7 @@ import {DrugEntry} from "./App";
 import InteractionDisplay from "./InteractionDisplay";
 import './DrugSelect.css';
 
+/** Implements drug selector and comparison */
 const DrugSelect = ({ drugs }: { drugs: DrugEntry[] }) => {
 
     const [selectedOption, setSelectedOption] = useState<OptionType>([]);
@@ -19,6 +20,8 @@ const DrugSelect = ({ drugs }: { drugs: DrugEntry[] }) => {
             return duplicate ? uniqueOptions : [...uniqueOptions, option];
         }, []);
     }
+
+    // Transform the drugs array to the type required by react-select library
     const mapDrugsToOptions = (drugs: DrugEntry[]): OptionType => {
         return drugs.flatMap(drug => [
             { value: drug.Drug_A, label: drug.Drug_A },
@@ -26,7 +29,7 @@ const DrugSelect = ({ drugs }: { drugs: DrugEntry[] }) => {
         ]);
     };
 
-    // Convert drugs to {value, label} objects
+    // Convert drugs to {value, label} objects and remove duplicates
     const options: OptionType = useMemo(() => {
         return filterDuplicateOptions(mapDrugsToOptions(drugs));
     }, [drugs]);

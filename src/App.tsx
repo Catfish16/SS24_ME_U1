@@ -18,6 +18,11 @@ const App = ( ) => {
         }
     }
 
+    /** Data fetching and parsing helper function:
+     * fetches selected dataset from public folder,
+     * converts to file format to pass to the parsing library
+     * parses csv to DrugEntry object type array
+     */
     const fetchData = useCallback(() => {
         fetch(`/assets/${selectedDataset}.csv`)
             .then(response => {
@@ -32,7 +37,6 @@ const App = ( ) => {
                     delimiter: ',',
                     header: true,
                     complete: (results) => {
-                        console.log(results);
                         setParsedData(results.data as DrugEntry[]);
                     }
                 });
@@ -40,14 +44,6 @@ const App = ( ) => {
             .catch(error => console.error('There has been a problem with your fetch operation: ', error.message));
     }, [selectedDataset, setSelectedDataset]);
 
-
-    const compareDrug = (drug: string) => {
-        const interactiveDrugs = parsedData.filter(item => (item.Drug_A === drug || item.Drug_B === drug))
-    }
-
-    useEffect(() => {
-        console.log(parsedData.length)
-    }, [parsedData]);
 
   return (
     <div className="App">
@@ -109,10 +105,6 @@ const App = ( ) => {
 }
 
 export default App;
-
-export interface AppProps {
-    temp: string;
-}
 
 export interface DrugEntry {
     DDInterID_A: string;
